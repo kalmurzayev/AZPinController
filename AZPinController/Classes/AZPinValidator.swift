@@ -22,7 +22,7 @@ open class AZPinValidator: AZPinValidating {
     open var additional: ((String) -> Bool)?;
     private var _pinLength: Int;
     public required init(pinLength: Int = 4) {
-        _pinLength = 4;
+        _pinLength = pinLength;
     }
     
     open func validate(_ pin: String) -> Bool {

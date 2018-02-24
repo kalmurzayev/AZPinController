@@ -20,7 +20,7 @@ class AZPinFieldEntry: UIView {
     var errorColor: UIColor = UIColor.red;
     var fillAnimate: Bool = true {
         didSet {
-            self._animationDuration = self.fillAnimate ? AZPinFieldEntry.animationDurationDefault : 0;
+            _animationDuration = self.fillAnimate ? AZPinFieldEntry.animationDurationDefault : 0;
         }
     };
     private var _animationDuration: TimeInterval = AZPinFieldEntry.animationDurationDefault;
@@ -42,14 +42,14 @@ class AZPinFieldEntry: UIView {
     
     /// Fills FieldEntry with fill color
     func fill() {
-        UIView.animate(withDuration: self._animationDuration, animations: {
+        UIView.animate(withDuration: _animationDuration, animations: {
             self.backgroundColor = self.fillColor;
         });
     }
     
     /// Cleans Entry and sets color back to white
     func reset() {
-        UIView.animate(withDuration: self._animationDuration, animations: {
+        UIView.animate(withDuration: _animationDuration, animations: {
             self.adjustColors();
         });
     }

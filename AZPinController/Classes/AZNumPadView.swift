@@ -22,53 +22,65 @@ protocol AZNumPadDelegate: class {
     func deleteTappedIn(numPad: AZNumPadView);
 }
 
-class AZNumPadView: UIView, AZNumPadButtonDelegate {
+public class AZNumPadView: UIView, AZNumPadButtonDelegate {
     var mainColor: UIColor? {
         didSet {
             self.adjustColors();
         }
-    };
+    }
     var font: UIFont? {
         didSet {
             if self.font == nil { return }
-            self._numPadButtons.forEach {
+            _numPadButtons.forEach {
                 $0.font = self.font!;
             }
         }
-    };
+    }
     var numPadAnimateTap: Bool = true {
         didSet {
-            self._numPadButtons.forEach {
+            _numPadButtons.forEach {
                 $0.tapAnimate = self.numPadAnimateTap;
             }
         }
-    };
+    }
     var buttonWidth: CGFloat? {
         didSet {
             if self.buttonWidth == nil { return }
             self.removeAllSubviews();
             self.populateButtons();
         }
-    };
-    // todo: use palette
-    var deleteButtonImage: UIImage!;
+    }
+    open var buttonBackgroundColor: UIColor? {
+        didSet {
+            if buttonBackgroundColor == nil { return }
+            _numPadButtons.forEach {
+                $0.backgroundColor = buttonBackgroundColor!;
+            }
+        }
+    }
+    var deleteButtonImage: UIImage? {
+        didSet {
+            _deleteButton?.setImage(deleteButtonImage, for: .normal);
+        }
+    }
     weak var delegate: AZNumPadDelegate?;
     private var _numPadButtons: [AZNumPadButton] = [];
+    private var _deleteButton: UIButton?;
     /// used to align bottom-left button in AZPinViewController
     var leftMostView: UIView?
     /// used to align bottom-right button in AZPinViewController
     var rightMostView: UIView?
     // MARK: - init methods
-    override init(frame: CGRect) {
+    override public init(frame: CGRect) {
         super.init(frame: frame);
         self.initiateViews();
     }
     
-    convenience init() {
+    convenience public init() {
         self.init(frame: CGRect.zero);
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder);
     }
     
@@ -104,7 +116,7 @@ class AZNumPadView: UIView, AZNumPadButtonDelegate {
             } else if i == 9 {
                 rightMostView = button
             }
-            self._numPadButtons.append(button);
+            _numPadButtons.append(button);
         }
         // 2. adding the last zero button
         let zeroButton = AZNumPadButton();
@@ -118,7 +130,7 @@ class AZNumPadView: UIView, AZNumPadButtonDelegate {
             $0.centerX.equalTo(self);
             $0.centerY.equalTo(self).multipliedBy(10.0 / 5.5);
         };
-        self._numPadButtons.append(zeroButton);
+        _numPadButtons.append(zeroButton);
         // 3. adjust colors for buttons
         self.adjustColors();
         
@@ -175,10 +187,9 @@ class AZNumPadView: UIView, AZNumPadButtonDelegate {
     }
     
     private func adjustColors() {
-        if self.mainColor != nil {
-            self._numPadButtons.forEach {
-                $0.mainColor = self.mainColor!;
-            }
+        guard let color = self.mainColor else { return }
+        _numPadButtons.forEach {
+            $0.mainColor = color;
         }
     }
     

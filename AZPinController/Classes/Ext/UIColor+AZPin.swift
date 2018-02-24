@@ -7,14 +7,14 @@
 
 import Foundation
 import Dollar
-extension UIColor {
+public extension UIColor {
     
     /// Method to create UIColor from rgb hex value
     ///
     /// - Parameters:
     ///   - hex: Hex value
     ///   - alpha: alpha value
-    convenience init(hex: Int, alpha: Float = 1.0) {
+    public convenience init(hex: Int, alpha: Float = 1.0) {
         self.init(
             red: CGFloat((hex >> 16) & 0xFF) / 255.0,
             green: CGFloat((hex >> 8) & 0xFF) / 255.0,
@@ -23,10 +23,10 @@ extension UIColor {
         )
     }
     
-    var coreImageColor: CIColor {
+    public var coreImageColor: CIColor {
         return CIColor(color: self)
     }
-    var components: [CGFloat] {
+    public var components: [CGFloat] {
         let coreImageColor = self.coreImageColor
         return [coreImageColor.red, coreImageColor.green, coreImageColor.blue, coreImageColor.alpha];
     }
@@ -37,7 +37,7 @@ extension UIColor {
     ///   - color1: First UIColor
     ///   - color2: Second UIColor
     /// - Returns: UIColor with new rgb value
-    static func averageColor(_ color1: UIColor, _ color2: UIColor) -> UIColor {
+    public static func averageColor(_ color1: UIColor, _ color2: UIColor) -> UIColor {
         let averages = `$`.zip(color1.components, color2.components).map { $0.average };
         return UIColor(red: averages[0], green: averages[1], blue: averages[2], alpha: averages[3]);
     }

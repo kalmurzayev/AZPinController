@@ -14,39 +14,52 @@ enum AZMargins {
     static let XL: CGFloat = 8 * marginUnit;
 }
 
-struct AZPinBlueprint {
-    var numPadXPadding: CGFloat = AZMargins.L;
-    var numPadYPadding: CGFloat = AZMargins.M;
-    var bottomOffset: CGFloat = AZMargins.XL;
-    var numPadButtonDiameter: CGFloat = 36;
-    var deleteImage: UIImage!;
-    var labelVerticalMargin: CGFloat = AZMargins.marginUnit;
-    var pinFieldTopMargin: CGFloat = AZMargins.L;
+/// Struct containing all geometry related values
+public struct AZPinBlueprint {
+    public var numPadXPadding: CGFloat = AZMargins.L;
+    public var numPadYPadding: CGFloat = AZMargins.M;
+    public var bottomOffset: CGFloat = AZMargins.XL;
+    public var numPadButtonDiameter: CGFloat = 72;
+    public var deleteImage: UIImage?;
+    public var labelVerticalMargin: CGFloat = AZMargins.marginUnit;
+    public var pinFieldTopMargin: CGFloat = AZMargins.L;
 }
 
-struct AZPinVocabulary {
-    var skipButtonText = "Skip";
-    var statusLabelInitText = "Please enter your PIN";
-    var repeatPinText = "Please repeat your PIN";
-    var pinsNotMatchText = "Pin codes should match";
-    var cancelText = "Cancel";
+/// Struct containing all text related values
+public struct AZPinVocabulary {
+    public var skipButtonText = "Skip";
+    public var titleText = "Pin Code";
+    public var statusLabelInitText = "Please enter your PIN";
+    public var repeatPinText = "Please repeat your PIN";
+    public var pinsNotMatchText = "Pin codes should match";
+    public var cancelText = "Cancel";
+    public var closeText = "Close";
 }
 
-struct AZPinPalette {
-    var fontDefault = UIFont.systemFont(ofSize: 15);
-    var fontTitle = UIFont.systemFont(ofSize: 19.0);
-    var errorColor = UIColor(hex: 0xe5466e);
-    var successColor = UIColor(hex: 0x1ed7c5);
-    var mainColor = UIColor(hex: 0x26a9e0);
-    var backgroundColor = UIColor(hex: 0x00ccdd);
-    var buttonBackgroundColor = UIColor(hex: 0xFFFFFF, alpha: 0.4);
+/// Struct containing colors and fonts
+public struct AZPinPalette {
+    public var fontDefault = UIFont.systemFont(ofSize: 15);
+    public var fontTitle = UIFont.systemFont(ofSize: 19.0);
+    public var fontDigits = UIFont.systemFont(ofSize: 32)
+    public var fontDescription = UIFont.systemFont(ofSize: 13);
+    public var errorColor = UIColor(hex: 0xe5466e);
+    public var successColor = UIColor(hex: 0x1ed7c5);
+    public var mainColor = UIColor(hex: 0x666666);
+    public var textColor = UIColor(hex: 0x666666);
+    public var backgroundColor = UIColor.white;
+    public var pinEntryFillColor = UIColor(hex: 0x26a9e0)
+    public var pinEntrySuccessColor = UIColor(hex: 0x1ed7c5);
+    public var buttonBackgroundColor = UIColor(hex: 0xFFFFFF, alpha: 0.4);
+    
 }
-
 
 /// Data set with values for PinController visual properties
 /// All dataset properties have default values
-struct AZPinDataSet {
-    var blueprint = AZPinBlueprint();
-    var vocab = AZPinVocabulary();
-    var palette = AZPinPalette();
+public struct AZPinDataSet {
+    public var blueprint = AZPinBlueprint();
+    public var vocab = AZPinVocabulary();
+    public var palette = AZPinPalette();
+    public init() {
+        
+    }
 }

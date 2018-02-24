@@ -16,42 +16,43 @@ protocol AZNumPadButtonDelegate: class {
 }
 
 class AZNumPadButton: UIView {
-    static let animationDurationDefault: Double = 0.2;
+    static let animationDurationDefault: Double = 0.3;
     weak var delegate: AZNumPadButtonDelegate?;
     var mainColor: UIColor = .black {
         didSet {
-            self.adjustColors();
+            _digitLabel.textColor = mainColor;
+            _lettersLabel.textColor = mainColor;
         }
     }
     var tapAnimate: Bool = true {
         didSet {
-            self._animationDuration = self.tapAnimate ? AZPinFieldEntry.animationDurationDefault : 0;
+            _animationDuration = self.tapAnimate
+                ? AZPinFieldEntry.animationDurationDefault : 0;
         }
-    };
-    var font: UIFont = UIFont.systemFont(ofSize: 36) {
+    }
+    var font: UIFont = UIFont.systemFont(ofSize: 32) {
         didSet {
-            self._digitLabel.font = self.font;
+            _digitLabel.font = self.font;
         }
-    };
+    }
     var buttonText: String? {
         didSet {
-            if self.buttonText == nil { return }
-            self._digitLabel.text = self.buttonText;
+            if buttonText == nil { return }
+            _digitLabel.text = buttonText;
         }
     }
     var lettersText: String? {
         didSet {
-            lettersLabel.text = lettersText
+            _lettersLabel.text = lettersText
         }
     }
     var valueText: String?;
     private var _animationDuration: TimeInterval = AZPinFieldEntry.animationDurationDefault;
     private var _digitLabel = AZCommonLabel();
-    private var lettersLabel: UILabel = {
+    private var _lettersLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 10.0, weight: .medium)
-        label.textColor = .white
         return label
     }()
     // MARK: - init methods
@@ -78,21 +79,22 @@ class AZNumPadButton: UIView {
         self.snp.makeConstraints({
             $0.height.equalTo(self.snp.width);
         });
+        self.layer.borderWidth = 1;
+        self.layer.masksToBounds = true;
         self.setupDigitLabel();
         self.setupLettersLabel();
-        self.adjustColors();
         self.setupTap();
     }
     
     /// Initiates Digit label, adds to view
     private func setupDigitLabel() {
-        self._digitLabel.textAlignment = .center;
-        self._digitLabel.font = self.font;
-        self._digitLabel.backgroundColor = UIColor.clear;
-        self.addSubview(self._digitLabel);
-        self._digitLabel.translatesAutoresizingMaskIntoConstraints = false
+        _digitLabel.textAlignment = .center;
+        _digitLabel.font = self.font;
+        _digitLabel.backgroundColor = UIColor.clear;
+        self.addSubview(_digitLabel);
+        _digitLabel.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            // use blueprint
+            // TODO: use blueprint
             _digitLabel.centerYAnchor.constraint(
                 equalTo: centerYAnchor, constant: -8),
             _digitLabel.centerXAnchor.constraint(equalTo: centerXAnchor)
@@ -100,10 +102,10 @@ class AZNumPadButton: UIView {
     }
     
     private func setupLettersLabel() {
-        addSubview(lettersLabel)
+        addSubview(_lettersLabel)
         NSLayoutConstraint.activate([
-            lettersLabel.topAnchor.constraint(equalTo: _digitLabel.bottomAnchor),
-            lettersLabel.centerXAnchor.constraint(equalTo: _digitLabel.centerXAnchor)
+            _lettersLabel.topAnchor.constraint(equalTo: _digitLabel.bottomAnchor),
+            _lettersLabel.centerXAnchor.constraint(equalTo: _digitLabel.centerXAnchor)
             ])
     }
     
@@ -123,20 +125,13 @@ class AZNumPadButton: UIView {
             let colorKeyframeAnimation = CAKeyframeAnimation(keyPath: "backgroundColor");
             // TODO: use palette
             colorKeyframeAnimation.values = [
-                UIColor(hex: 0xFFFFFF, alpha: 0.4).cgColor,
-                UIColor.white.cgColor];
+                self.backgroundColor!.cgColor,
+                self.mainColor.cgColor];
             colorKeyframeAnimation.keyTimes = [
                 0, NSNumber(value: AZNumPadButton.animationDurationDefault / 2.0)];
             colorKeyframeAnimation.duration = AZNumPadButton.animationDurationDefault;
             self.layer.add(colorKeyframeAnimation, forKey: nil);
         }
         self.delegate?.numPadButtonTapped(self);
-    }
-    
-    /// Sets All colors, used by computed property fillColor
-    private func adjustColors() {
-        // TODO: get from palette
-        self.backgroundColor = UIColor(hex: 0xFFFFFF, alpha: 0.4);
-        _digitLabel.textColor = UIColor.white;
     }
 }

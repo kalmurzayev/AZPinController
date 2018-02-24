@@ -6,18 +6,18 @@
 //
 
 import Foundation
-class AZCommonLabel: UILabel {
+public class AZCommonLabel: UILabel {
     static let heightDefault: CGFloat = 20;
-    override init(frame: CGRect) {
+    override public init(frame: CGRect) {
         super.init(frame: frame);
         self.initiateViews();
     }
     
-    convenience init() {
+    convenience public init() {
         self.init(frame: CGRect.zero);
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder);
     }
     

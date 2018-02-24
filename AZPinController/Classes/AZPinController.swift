@@ -6,9 +6,8 @@
 //
 
 import Foundation
-import UIKit;
-import SnapKit;
-
+import UIKit
+import SnapKit
 @objc protocol AZPinControllerDelegate: class {
     /// Delegate method to notify n-th pin entry is activated. Not called, when validation method is called
     @objc optional func pinViewController(_ controller: AZPinController, updatedPin: String);
@@ -23,14 +22,6 @@ import SnapKit;
 }
 
 open class AZPinController: UIViewController {
-    // MARK: - static dimensions
-    open var closeButtonSize: CGSize = CGSize(width: 100, height: 20) {
-        didSet {
-            self.closeButton.snp.updateConstraints {
-                $0.size.equalTo(closeButtonSize);
-            }
-        }
-    }
     // MARK: - parameters
     open var closeButtonTitle: String? {
         get {
@@ -46,14 +37,6 @@ open class AZPinController: UIViewController {
         }
         set {
             self.statusLabel.text = newValue;
-        }
-    }
-    open var statusFont: UIFont? {
-        get {
-            return self.statusLabel.font;
-        }
-        set {
-            self.statusLabel.font = newValue;
         }
     }
     open var statusColor: UIColor? {
@@ -72,14 +55,6 @@ open class AZPinController: UIViewController {
             self.titleLabel.text = newValue;
         }
     }
-    open var titleFont: UIFont? {
-        get {
-            return self.titleLabel.font;
-        }
-        set {
-            self.titleLabel.font = newValue;
-        }
-    }
     open var titleColor: UIColor? {
         get {
             return self.titleLabel.textColor;
@@ -88,75 +63,59 @@ open class AZPinController: UIViewController {
             self.titleLabel.textColor = newValue;
         }
     }
-    
     fileprivate var _dataSet = AZPinDataSet();
     // MARK: - PIN entry properties
-    var pinEntryFillColor: UIColor?;
-    var mainBackgroundColor: UIColor?
-    var pinEntrySuccessColor: UIColor?;
-    var pinEntryErrorColor: UIColor?;
-    var pinLength: Int = 4 {
+    open var pinLength: Int = 4 {
         didSet {
             _pinText = AZPinText(capacity: self.pinLength);
         }
     };
-    var pinValue: String {
+    open var pinValue: String {
         return _pinText.value;
     }
-    var pinEntryShakeOnError: Bool = true;
-    var pinEntryShineOnSuccess: Bool = true;
-    var pinEntryFillAnimate: Bool = true;
-    var closeOnSuccess: Bool = true;
-    // MARK: - Num Pad properties
-    var numPadMainColor: UIColor? {
-        didSet {
-            self.numPadView.mainColor = self.numPadMainColor;
-        }
-    };
-    var numPadFont: UIFont? {
-        didSet {
-            self.numPadView.font = self.numPadFont;
-        }
-    };
-    var numPadAnimateTap: Bool = true {
+    open var pinEntryShakeOnError: Bool = true;
+    open var pinEntryShineOnSuccess: Bool = true;
+    open var pinEntryFillAnimate: Bool = true;
+    open var closeOnSuccess: Bool = true;
+    open var numPadAnimateTap: Bool = true {
         didSet {
             self.numPadView.numPadAnimateTap = self.numPadAnimateTap;
         }
     };
     // MARK: - subviews
-    var titleLabel: AZCommonLabel = {
+    open var titleLabel: AZCommonLabel = {
         let label = AZCommonLabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        // label.font = BAGlobals.FONT_TITLE
         return label
     }()
     /// Set to true if pPIN code needs to be repeated before validation
-    var shouldConfirmPin: Bool = false;
+    open var shouldConfirmPin: Bool = false;
     /// If true, shows loading animation while processing deferred validator
-    var shouldAnimateLoading: Bool = false;
-    var statusLabel: AZCommonLabel = {
+    open var shouldAnimateLoading: Bool = false;
+    open var statusLabel: AZCommonLabel = {
         let label = AZCommonLabel()
         label.numberOfLines = 2;
         label.textAlignment = .center;
         return label;
     }()
-    var pinField: AZPinField?;
-    var numPadView: AZNumPadView = AZNumPadView();
-    var closeButton: UIButton = UIButton(type: .system);
-    var rightButton: UIButton = {
+    open var pinField: AZPinField?;
+    open var numPadView: AZNumPadView = AZNumPadView();
+    open var closeButton: UIButton = UIButton(type: .system);
+    open var rightButton: UIButton = {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.tintColor = .white
         return button
     }()
     fileprivate var _actIndicator: AZLoadingView?;
-    var pinValidator: AZPinValidating?
+    open var pinValidator: AZPinValidating?
     weak var delegate: AZPinControllerDelegate?;
     // MARK: - Private properties
     fileprivate var _pinText: AZPinText!;
     fileprivate var _isRepeatingPin: Bool = false;
     fileprivate var _titleTemp: String?;
     fileprivate var _pinCodeTemp: String?;
+    fileprivate var _stateMachine: AZPinControllerStateMachineProtocol?;
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder);
     }
@@ -165,142 +124,22 @@ open class AZPinController: UIViewController {
         super.init(nibName: nil, bundle: nil);
     }
     
-    override open func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated);
+    public convenience init(dataSet: AZPinDataSet) {
+        self.init();
+        _dataSet = dataSet;
     }
-    
+
     override open func viewDidLoad() {
         super.viewDidLoad();
-        self.initiateViews();
-    }
-    
-    /// resets pin data and pin field
-    func reset() {
-        self.pinField?.reset();
-        _pinText.reset();
-    }
-    
-    // MARK: - Initiate subviews
-    /// Initiating subviews and adjusting their layout constraints
-    private func initiateViews() {
-        // NOTE: please do not alter the order of following function calls, otherwise will break SnapKit constraint creation
-        _pinText = AZPinText(capacity: self.pinLength);
-        self.setupTitleLabel();
-        self.setupStatusLabel();
-        self.setupPinField();
-        self.setupNumPad();
-        self.setupLoadingView();
-        self.setupCloseButton();
-        self.setupRightButton();
-        view.backgroundColor = mainBackgroundColor
-    }
-    
-    /// Setting up NumPad with layout constraints
-    private func setupNumPad() {
-        self.view.addSubview(self.numPadView);
-        let width = _dataSet.blueprint.numPadButtonDiameter;
-        self.numPadView.snp.makeConstraints {
-            $0.top.equalTo(pinField!.snp.bottom).offset(50.0);
-            $0.centerX.equalTo(self.view);
-            $0.width.equalTo(width * 3.0 + _dataSet.blueprint.numPadXPadding * 2.0);
-            $0.height.equalTo(width * 4.0 + _dataSet.blueprint.numPadYPadding * 3.0);
-        }
-        self.numPadView.buttonWidth = width;
-        self.numPadView.delegate = self;
-    }
-    
-    /// Setting up Status Label with layout constraints
-    private func setupStatusLabel() {
-        self.view.addSubview(self.statusLabel);
-        self.statusLabel.snp.makeConstraints({
-            $0.top.equalTo(self.titleLabel.snp.bottom)
-                .offset(_dataSet.blueprint.labelVerticalMargin);
-            $0.centerX.equalTo(self.view);
-        });
-        if shouldConfirmPin {
-            statusLabel.textColor = .white
-            statusLabel.text = _dataSet.vocab.statusLabelInitText;
-        }
-    }
-    
-    /// Setting up Pin Field with circle entries and layout constraints
-    private func setupPinField() {
-        self.pinField = AZPinField(pinLength: self.pinLength);
-        self.pinField?.fillColor = self.pinEntryFillColor;
-        self.pinField?.fillAnimate = self.pinEntryFillAnimate;
-        self.pinField?.successColor = self.pinEntrySuccessColor;
-        self.pinField?.errorColor = self.pinEntryErrorColor;
-        self.view.addSubview(self.pinField!);
-        self.pinField!.snp.makeConstraints {
-            $0.top.equalTo(self.statusLabel.snp.bottom)
-                .offset(_dataSet.blueprint.pinFieldTopMargin);
-            $0.centerX.equalTo(self.view);
-        }
-    }
-    
-    fileprivate func setupLoadingView() {
-        if !self.shouldAnimateLoading { return }
-        let indicator = AZLoadingView();
-        self.view.addSubview(indicator);
-        _actIndicator = indicator;
-        
-        guard let field = self.pinField else { return }
-        indicator.snp.makeConstraints { $0.center.equalTo(field) }
-    }
-    
-    /// Setting up Top Title Label with layout constraints
-    private func setupTitleLabel() {
-        self.view.addSubview(self.titleLabel);
-        NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 100.0),
-            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
-            ])
-    }
-    
-    /// Initiating Close button and adjusting layout constraints
-    private func setupCloseButton() {
-        self.closeButton.backgroundColor = UIColor.clear;
-        self.closeButton.setTitleColor(UIColor.white, for: .normal);
-        self.closeButton.titleLabel?.font = _dataSet.palette.fontDefault;
-        self.closeButton.addTarget(
-            self, action: #selector(closeTapped), for: .touchUpInside);
-        self.closeButton.translatesAutoresizingMaskIntoConstraints = false;
-        self.view.addSubview(self.closeButton);
-        self.closeButton.snp.makeConstraints {
-            $0.bottom.equalTo(self.view).offset(-_dataSet.blueprint.bottomOffset);
-        }
-        if let numPadLeftView = numPadView.leftMostView {
-            self.closeButton.snp.makeConstraints {
-                $0.centerX.equalTo(numPadLeftView)
-            }
-            return;
-        }
-        self.closeButton.snp.makeConstraints {
-            $0.left.equalTo(numPadView.snp.left)
-        }
-    }
-    
-    private func setupRightButton() {
-        view.addSubview(rightButton)
-        if shouldConfirmPin {
-            rightButton.setTitle(_dataSet.vocab.skipButtonText, for: .normal)
-            rightButton.snp.makeConstraints {
-                $0.bottom.equalTo(self.view)
-                    .offset(-_dataSet.blueprint.bottomOffset);
-            }
-            if let numPadRightView = numPadView.rightMostView {
-                rightButton.snp.makeConstraints {
-                    $0.centerX.equalTo(numPadRightView)
-                }
-            } else {
-                rightButton.snp.makeConstraints {
-                    $0.right.equalTo(numPadView.snp.right)
-                }
-            }
-            rightButton.addTarget(self, action: #selector(closeTapped), for: .touchUpInside)
-            closeButton.isHidden = true
-            return
-        }
+        self.setupText()
+            .setupTitleLabel()
+            .setupStatusLabel()
+            .setupPinField()
+            .setupNumPad()
+            .setupLoadingView()
+            .setupCloseButton()
+            .setupRightButton()
+            .finalizeView();
     }
     
     /// Target function to close the PinViewController
@@ -311,12 +150,185 @@ open class AZPinController: UIViewController {
     }
 }
 
+// MARK: - View builders
+extension AZPinController {
+    fileprivate func setupText() -> Self {
+        _pinText = AZPinText(capacity: self.pinLength);
+        return self;
+    }
+    
+    /// Setting up Top Title Label with layout constraints
+    fileprivate func setupTitleLabel() -> Self {
+        self.titleLabel.font = _dataSet.palette.fontTitle;
+        self.titleLabel.textColor = _dataSet.palette.textColor;
+        self.titleText = _dataSet.vocab.titleText;
+        self.view.addSubview(self.titleLabel);
+        NSLayoutConstraint.activate([
+            titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 100.0),
+            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            ])
+        return self;
+    }
+    
+    /// Setting up Status Label with layout constraints
+    fileprivate func setupStatusLabel() -> Self {
+        self.view.addSubview(self.statusLabel);
+        self.statusLabel.font = _dataSet.palette.fontDescription;
+        self.statusLabel.textColor = _dataSet.palette.textColor;
+        self.statusLabel.snp.makeConstraints {
+            $0.top.equalTo(self.titleLabel.snp.bottom)
+                .offset(_dataSet.blueprint.labelVerticalMargin);
+            $0.centerX.equalTo(self.view);
+        }
+        self.statusText = _dataSet.vocab.statusLabelInitText;
+        return self;
+    }
+    
+    /// Setting up Pin Field with circle entries and layout constraints
+    fileprivate func setupPinField() -> Self {
+        let field = AZPinField(pinLength: self.pinLength);
+        field.fillColor = _dataSet.palette.pinEntryFillColor;
+        field.fillAnimate = self.pinEntryFillAnimate;
+        field.successColor = _dataSet.palette.pinEntrySuccessColor;
+        field.errorColor = _dataSet.palette.errorColor;
+        self.view.addSubview(field);
+        field.snp.makeConstraints {
+            $0.top.equalTo(self.statusLabel.snp.bottom)
+                .offset(_dataSet.blueprint.pinFieldTopMargin);
+            $0.centerX.equalTo(self.view);
+        }
+        self.pinField = field;
+        return self;
+    }
+    
+    /// Setting up NumPad with layout constraints
+    fileprivate func setupNumPad() -> Self {
+        self.view.addSubview(self.numPadView);
+        self.numPadView.deleteButtonImage = _dataSet.blueprint.deleteImage;
+        let width = _dataSet.blueprint.numPadButtonDiameter;
+        self.numPadView.snp.makeConstraints {
+            $0.top.equalTo(pinField!.snp.bottom).offset(50.0);
+            $0.centerX.equalTo(self.view);
+            $0.width.equalTo(width * 3.0 + _dataSet.blueprint.numPadXPadding * 2.0);
+            $0.height.equalTo(width * 4.0 + _dataSet.blueprint.numPadYPadding * 3.0);
+        }
+        self.numPadView.buttonWidth = width;
+        self.numPadView.delegate = self;
+        self.numPadView.font = _dataSet.palette.fontDigits;
+        self.numPadView.mainColor = _dataSet.palette.mainColor;
+        self.numPadView.buttonBackgroundColor = _dataSet.palette.buttonBackgroundColor;
+        return self;
+    }
+    
+    fileprivate func setupLoadingView() -> Self {
+        if !self.shouldAnimateLoading { return self }
+        let indicator = AZLoadingView();
+        self.view.addSubview(indicator);
+        _actIndicator = indicator;
+        
+        guard let field = self.pinField else { return self }
+        indicator.snp.makeConstraints { $0.center.equalTo(field) }
+        return self;
+    }
+    
+    /// Initiating Close button and adjusting layout constraints
+    fileprivate func setupCloseButton() -> Self {
+        self.closeButton.backgroundColor = UIColor.clear;
+        self.closeButton.setTitleColor(_dataSet.palette.textColor, for: .normal);
+        self.closeButton.titleLabel?.font = _dataSet.palette.fontDefault;
+        self.closeButton.setTitle(_dataSet.vocab.closeText, for: .normal)
+        self.closeButton.addTarget(
+            self, action: #selector(closeTapped), for: .touchUpInside);
+        self.closeButton.translatesAutoresizingMaskIntoConstraints = false;
+        self.view.addSubview(self.closeButton);
+        self.closeButton.snp.makeConstraints {
+            $0.bottom.equalTo(self.view)
+                .offset(-_dataSet.blueprint.bottomOffset);
+        }
+        if let numPadLeftView = numPadView.leftMostView {
+            self.closeButton.snp.makeConstraints {
+                $0.centerX.equalTo(numPadLeftView)
+            }
+            return self;
+        }
+        self.closeButton.snp.makeConstraints {
+            $0.left.equalTo(numPadView.snp.left)
+        }
+        return self;
+    }
+    
+    fileprivate func setupRightButton() -> Self {
+        if !shouldConfirmPin { return self }
+        view.addSubview(rightButton)
+        rightButton.setTitle(_dataSet.vocab.skipButtonText, for: .normal)
+        rightButton.snp.makeConstraints {
+            $0.bottom.equalTo(self.view)
+                .offset(-_dataSet.blueprint.bottomOffset);
+        }
+        if let numPadRightView = numPadView.rightMostView {
+            rightButton.snp.makeConstraints {
+                $0.centerX.equalTo(numPadRightView)
+            }
+        } else {
+            rightButton.snp.makeConstraints {
+                $0.right.equalTo(numPadView.snp.right)
+            }
+        }
+        rightButton.addTarget(
+            self, action: #selector(closeTapped), for: .touchUpInside)
+        return self;
+    }
+    
+    fileprivate func finalizeView() {
+        view.backgroundColor = _dataSet.palette.backgroundColor;
+        if shouldConfirmPin {
+            _stateMachine = AZPinStateMachine();
+        }
+    }
+}
+
+// MARK: - Publics
+extension AZPinController {
+    /// resets pin data and pin field
+    func reset() {
+        self.pinField?.reset();
+        _pinText.reset();
+    }
+}
+
+fileprivate protocol AZPinControllerStateMachineProtocol: class {
+    func shift(with ctrl: AZPinController);
+    
+}
+
+fileprivate class AZPinStateMachine: AZPinControllerStateMachineProtocol {
+    enum CtrlState: Int {
+        case firstRun;
+        case repeatRun;
+    }
+    
+    private var current: CtrlState = .firstRun;
+    func shift(with ctrl: AZPinController) {
+        switch current {
+        case .firstRun:
+            ctrl.doFirstRoundCompletion();
+            break;
+        default:
+            ctrl.doLastRoundCompletion();
+            break;
+        }
+        self.increment();
+    }
+    
+    private func increment() {
+        let next: Int = (current.rawValue + 1) % 2;
+        current = CtrlState(rawValue: next)!;
+    }
+}
+
 // MARK: - SBNumPadDelegate methods
 extension AZPinController: AZNumPadDelegate {
     func numPad(_ numPad: AZNumPadView, enteredValue: String) {
-        if !shouldConfirmPin || _isRepeatingPin {
-            self.statusText = nil;
-        }
         _pinText.add(enteredValue);
         self.pinField?.addEntry();
         self.delegate?.pinViewController?(self, updatedPin: _pinText.value);
@@ -335,30 +347,33 @@ extension AZPinController: AZNumPadDelegate {
         
         // if pin needs to be repeated
         if self.shouldConfirmPin {
-            _isRepeatingPin = !_isRepeatingPin;
-            // if entering the first time
-            if _isRepeatingPin {
-                _pinCodeTemp = _pinText.value;
-                self.reset();
-                _titleTemp = self.titleText;
-                self.titleText = _dataSet.vocab.repeatPinText;
-                self.statusText = nil;
-                self.statusColor = _dataSet.palette.errorColor;
-                return;
-            }
-            // if entering the second time
-            if _pinText.value != _pinCodeTemp {
-                self.reset();
-                self.titleText = _titleTemp;
-                self.pinField?.trembleError();
-                self.statusText = _dataSet.vocab.pinsNotMatchText;
-                return;
-            }
+            _stateMachine?.shift(with: self);
+            return;
         }
-        guard let val = self.pinValidator else { return }
-        self.startLoading();
-        let isValid = val.validate(_pinText.value)
-        self.handlePinValResult(isValid: isValid)
+        self.handlePinValResult(_pinText.value);
+    }
+    
+    /// Execution logic for pin entering first round
+    fileprivate func doFirstRoundCompletion() {
+        _pinCodeTemp = _pinText.value;
+        self.reset();
+        _titleTemp = self.titleText;
+        self.titleText = _dataSet.vocab.repeatPinText;
+        self.statusText = nil;
+        self.statusColor = _dataSet.palette.errorColor;
+        return;
+    }
+    
+    /// Execution logic for pin entering last round
+    fileprivate func doLastRoundCompletion() {
+        if _pinText.value == _pinCodeTemp {
+            self.handlePinValResult(_pinText.value);
+            return;
+        }
+        self.reset();
+        self.titleText = _titleTemp;
+        self.pinField?.trembleError();
+        self.statusText = _dataSet.vocab.pinsNotMatchText;
     }
     
     /// When needed, hides the field and starts loading
@@ -376,20 +391,18 @@ extension AZPinController: AZNumPadDelegate {
     }
     
     /// Used as a deffered callback during deffered pin validation
-    ///
-    /// - Parameter isValid: validation result
-    fileprivate func handlePinValResult(isValid: Bool) {
-        self.stopLoading();
+    fileprivate func handlePinValResult(_ value: String) {
+        guard let val = self.pinValidator else { return }
+        let isValid = val.validate(value)
         if isValid {
             if self.pinEntryShineOnSuccess {
                 self.pinField?.fillSuccess();
             }
             if self.closeOnSuccess {
                 self.perform(#selector(closeWithSuccess), with: nil, afterDelay: 1.0);
-            } else {
-                self.delegate?.pinSuccessIn?(self);
+                return;
             }
-            return;
+            self.delegate?.pinSuccessIn?(self);
         }
         
         self.reset();
