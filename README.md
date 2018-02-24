@@ -1,9 +1,10 @@
 # AZPinController
-
 [![CI Status](http://img.shields.io/travis/c67e82179175dc901d5644eb15c86b44ab58d693/AZPinController.svg?style=flat)](https://travis-ci.org/c67e82179175dc901d5644eb15c86b44ab58d693/AZPinController)
 [![Version](https://img.shields.io/cocoapods/v/AZPinController.svg?style=flat)](http://cocoapods.org/pods/AZPinController)
 [![License](https://img.shields.io/cocoapods/l/AZPinController.svg?style=flat)](http://cocoapods.org/pods/AZPinController)
 [![Platform](https://img.shields.io/cocoapods/p/AZPinController.svg?style=flat)](http://cocoapods.org/pods/AZPinController)
+
+Simple UIViewController for entering pin codes of various length
 
 ## Example
 
@@ -22,7 +23,7 @@ pod 'AZPinController'
 
 ## Author
 
-c67e82179175dc901d5644eb15c86b44ab58d693, kalmurzayev@gmail.com
+github.com/kalmurzayev, kalmurzayev@gmail.com
 
 ## License
 
