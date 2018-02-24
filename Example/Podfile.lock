@@ -1,0 +1,22 @@
+PODS:
+  - AZPinController (0.1.0)
+  - Nimble (7.0.3)
+  - Quick (1.2.0)
+
+DEPENDENCIES:
+  - AZPinController (from `../`)
+  - Nimble (~> 7.0.2)
+  - Quick (~> 1.2.0)
+
+EXTERNAL SOURCES:
+  AZPinController:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  AZPinController: 8569a6640454f3fccf17fb706b2c34676903bc6f
+  Nimble: 7f5a9c447a33002645a071bddafbfb24ea70e0ac
+  Quick: 58d203b1c5e27fff7229c4c1ae445ad7069a7a08
+
+PODFILE CHECKSUM: 312307898a1b0ac6013649f8935dbd37e2f0b3c0
+
+COCOAPODS: 1.2.1
