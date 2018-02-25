@@ -25,6 +25,4 @@ Pod::Spec.new do |s|
 
   s.frameworks = 'UIKit'
   s.dependency 'SnapKit'
-  s.dependency 'Dollar'
-
 end

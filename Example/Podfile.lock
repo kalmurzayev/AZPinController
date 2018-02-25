@@ -1,8 +1,6 @@
 PODS:
   - AZPinController (0.1.0):
-    - Dollar
     - SnapKit
-  - Dollar (7.0.0)
   - Nimble (7.0.3)
   - Quick (1.2.0)
   - SnapKit (4.0.0)
@@ -17,8 +15,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  AZPinController: a358d5aca93ba5d724a2a9222dcf3fda4ec420ef
-  Dollar: b052b910c711bed91c26caeaec85aa22bccf1655
+  AZPinController: 4d556d978ae2488f7703923d941b5c1c7f710bae
   Nimble: 7f5a9c447a33002645a071bddafbfb24ea70e0ac
   Quick: 58d203b1c5e27fff7229c4c1ae445ad7069a7a08
   SnapKit: a42d492c16e80209130a3379f73596c3454b7694

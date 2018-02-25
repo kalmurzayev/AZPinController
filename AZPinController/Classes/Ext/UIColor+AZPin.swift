@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Dollar
 public extension UIColor {
     
     /// Method to create UIColor from rgb hex value
@@ -38,7 +37,7 @@ public extension UIColor {
     ///   - color2: Second UIColor
     /// - Returns: UIColor with new rgb value
     public static func averageColor(_ color1: UIColor, _ color2: UIColor) -> UIColor {
-        let averages = `$`.zip(color1.components, color2.components).map { $0.average };
-        return UIColor(red: averages[0], green: averages[1], blue: averages[2], alpha: averages[3]);
+        let avgs = zip(color1.components, color2.components).map { [$0.0, $0.1].average };
+        return UIColor(red: avgs[0], green: avgs[1], blue: avgs[2], alpha: avgs[3]);
     }
 }
