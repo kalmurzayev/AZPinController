@@ -79,7 +79,6 @@ class AZNumPadButton: UIView {
         self.snp.makeConstraints({
             $0.height.equalTo(self.snp.width);
         });
-        self.layer.borderWidth = 1;
         self.layer.masksToBounds = true;
         self.setupDigitLabel();
         self.setupLettersLabel();

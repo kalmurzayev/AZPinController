@@ -16,10 +16,6 @@ protocol AZNumPadDelegate: class {
     ///   - numPad: caller Numpad instance
     ///   - enteredValue: input value
     func numPad(_ numPad: AZNumPadView, enteredValue: String);
-    /// Called on delegate when delete button tapped on numpad
-    ///
-    /// - Parameter numPad: caller Numpad instance
-    func deleteTappedIn(numPad: AZNumPadView);
 }
 
 public class AZNumPadView: UIView, AZNumPadButtonDelegate {
@@ -58,14 +54,8 @@ public class AZNumPadView: UIView, AZNumPadButtonDelegate {
             }
         }
     }
-    var deleteButtonImage: UIImage? {
-        didSet {
-            _deleteButton?.setImage(deleteButtonImage, for: .normal);
-        }
-    }
     weak var delegate: AZNumPadDelegate?;
     private var _numPadButtons: [AZNumPadButton] = [];
-    private var _deleteButton: UIButton?;
     /// used to align bottom-left button in AZPinViewController
     var leftMostView: UIView?
     /// used to align bottom-right button in AZPinViewController
@@ -133,20 +123,6 @@ public class AZNumPadView: UIView, AZNumPadButtonDelegate {
         _numPadButtons.append(zeroButton);
         // 3. adjust colors for buttons
         self.adjustColors();
-        
-        // 4. adding delete button
-        let deleteButton = UIButton();
-        deleteButton.backgroundColor = UIColor.clear;
-        deleteButton.setImage(self.deleteButtonImage, for: .normal);
-        deleteButton.addTarget(
-            self, action: #selector(deleteTapped), for: .touchUpInside);
-        self.addSubview(deleteButton);
-        deleteButton.snp.makeConstraints {
-            $0.width.equalTo(zeroButton);
-            $0.height.equalTo(deleteButton.snp.width);
-            $0.centerX.equalTo(self).multipliedBy(7.0 / 4);
-            $0.centerY.equalTo(zeroButton);
-        };
     }
     
     private func lettersForNum(_ num: Int) -> String? {
@@ -170,10 +146,6 @@ public class AZNumPadView: UIView, AZNumPadButtonDelegate {
         default:
             return nil
         }
-    }
-    
-    @objc private func deleteTapped() {
-        self.delegate?.deleteTappedIn(numPad: self);
     }
     
     private func resolveButtonWidth(_ width: ConstraintMakerExtendable) {

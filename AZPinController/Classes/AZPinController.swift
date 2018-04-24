@@ -81,14 +81,14 @@ open class AZPinController: UIViewController {
         didSet {
             self.numPadView.numPadAnimateTap = self.numPadAnimateTap;
         }
-    };
+    }
     // MARK: - subviews
     open var titleLabel: AZCommonLabel = {
         let label = AZCommonLabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    /// Set to true if pPIN code needs to be repeated before validation
+    /// Set to true if PIN code needs to be repeated before validation
     open var shouldConfirmPin: Bool = false;
     /// If true, shows loading animation while processing deferred validator
     open var shouldAnimateLoading: Bool = false;
@@ -107,15 +107,16 @@ open class AZPinController: UIViewController {
         button.tintColor = .white
         return button
     }()
+    open var deleteButton: UIButton = UIButton()
     fileprivate var _actIndicator: AZLoadingView?;
     open var pinValidator: AZPinValidating?
+    open var stateMachine: AZPinControllerStateMachineProtocol?;
     weak var delegate: AZPinControllerDelegate?;
     // MARK: - Private properties
     fileprivate var _pinText: AZPinText!;
     fileprivate var _isRepeatingPin: Bool = false;
     fileprivate var _titleTemp: String?;
     fileprivate var _pinCodeTemp: String?;
-    fileprivate var _stateMachine: AZPinControllerStateMachineProtocol?;
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder);
     }
@@ -139,6 +140,7 @@ open class AZPinController: UIViewController {
             .setupLoadingView()
             .setupCloseButton()
             .setupRightButton()
+            .setupDeleteButton()
             .finalizeView();
     }
     
@@ -204,7 +206,7 @@ extension AZPinController {
     /// Setting up NumPad with layout constraints
     fileprivate func setupNumPad() -> Self {
         self.view.addSubview(self.numPadView);
-        self.numPadView.deleteButtonImage = _dataSet.blueprint.deleteImage;
+//        self.numPadView.deleteButtonImage = _dataSet.blueprint.deleteImage;
         let width = _dataSet.blueprint.numPadButtonDiameter;
         self.numPadView.snp.makeConstraints {
             $0.top.equalTo(pinField!.snp.bottom).offset(50.0);
@@ -258,71 +260,80 @@ extension AZPinController {
     }
     
     fileprivate func setupRightButton() -> Self {
-        if !shouldConfirmPin { return self }
         view.addSubview(rightButton)
-        rightButton.setTitle(_dataSet.vocab.skipButtonText, for: .normal)
+        rightButton.backgroundColor = .clear
+        rightButton.setImage(_dataSet.blueprint.rightMostButtonImage, for: .normal)
+        rightButton.isHidden = false
         rightButton.snp.makeConstraints {
-            $0.bottom.equalTo(self.view)
-                .offset(-_dataSet.blueprint.bottomOffset);
+            $0.centerY.equalTo(closeButton)
         }
         if let numPadRightView = numPadView.rightMostView {
             rightButton.snp.makeConstraints {
                 $0.centerX.equalTo(numPadRightView)
             }
-        } else {
-            rightButton.snp.makeConstraints {
-                $0.right.equalTo(numPadView.snp.right)
-            }
+            return self
         }
-        rightButton.addTarget(
-            self, action: #selector(closeTapped), for: .touchUpInside)
+        rightButton.snp.makeConstraints {
+            $0.right.equalTo(numPadView.snp.right)
+        }
         return self;
     }
     
+    private func setupDeleteButton() -> Self {
+        deleteButton.backgroundColor = UIColor.clear;
+        deleteButton.setImage(_dataSet.blueprint.deleteImage, for: .normal);
+        deleteButton.addTarget(
+            self, action: #selector(deleteTapped), for: .touchUpInside);
+        self.view.addSubview(deleteButton);
+        deleteButton.isHidden = true
+        deleteButton.snp.makeConstraints {
+            $0.centerY.equalTo(closeButton)
+        }
+        if let numPadRightView = numPadView.rightMostView {
+            deleteButton.snp.makeConstraints {
+                $0.centerX.equalTo(numPadRightView)
+            }
+            return self
+        }
+        deleteButton.snp.makeConstraints {
+            $0.right.equalTo(numPadView.snp.right)
+        }
+        return self
+    }
+    
     fileprivate func finalizeView() {
+        stateMachine = AZPinRepeatStateMachine()
         view.backgroundColor = _dataSet.palette.backgroundColor;
-        if shouldConfirmPin {
-            _stateMachine = AZPinStateMachine();
+    }
+    
+    /// Helper invoked when delete button is tapped
+    @objc private func deleteTapped() {
+        _pinText.delete()
+        self.pinField?.deleteEntry();
+        if _pinText.length == 0 {
+            deleteButton.isHidden = true
+            rightButton.isHidden = false
         }
     }
-}
-
-// MARK: - Publics
-extension AZPinController {
+    
     /// resets pin data and pin field
-    func reset() {
+    open func reset() {
         self.pinField?.reset();
         _pinText.reset();
     }
-}
-
-fileprivate protocol AZPinControllerStateMachineProtocol: class {
-    func shift(with ctrl: AZPinController);
     
-}
-
-fileprivate class AZPinStateMachine: AZPinControllerStateMachineProtocol {
-    enum CtrlState: Int {
-        case firstRun;
-        case repeatRun;
+    /// When needed, hides the field and starts loading
+    open func startLoading() {
+        if !self.shouldAnimateLoading { return }
+        self.pinField?.hide();
+        _actIndicator?.startAnimating();
+        
     }
     
-    private var current: CtrlState = .firstRun;
-    func shift(with ctrl: AZPinController) {
-        switch current {
-        case .firstRun:
-            ctrl.doFirstRoundCompletion();
-            break;
-        default:
-            ctrl.doLastRoundCompletion();
-            break;
-        }
-        self.increment();
-    }
-    
-    private func increment() {
-        let next: Int = (current.rawValue + 1) % 2;
-        current = CtrlState(rawValue: next)!;
+    /// Stops loading animation
+    open func stopLoading() {
+        self.pinField?.unhide();
+        _actIndicator?.endAnimating();
     }
 }
 
@@ -332,29 +343,27 @@ extension AZPinController: AZNumPadDelegate {
         _pinText.add(enteredValue);
         self.pinField?.addEntry();
         self.delegate?.pinViewController?(self, updatedPin: _pinText.value);
+        if _pinText.length > 0 {
+            deleteButton.isHidden = false
+            rightButton.isHidden = true
+        }
         if _pinText.length == self.pinLength {
             self.handleFullPin();
         }
-    }
-    func deleteTappedIn(numPad: AZNumPadView) {
-        _pinText.delete();
-        self.pinField?.deleteEntry();
     }
     
     /// Handles all cases when entire PIN is entered
     private func handleFullPin() {
         if self.delegate == nil && self.pinValidator == nil { return }
-        
-        // if pin needs to be repeated
-        if self.shouldConfirmPin {
-            _stateMachine?.shift(with: self);
-            return;
+        if let machine = stateMachine {
+            machine.shift(with: self)
+            return
         }
-        self.handlePinValResult(_pinText.value);
+        handlePinValResult(_pinText.value)
     }
     
     /// Execution logic for pin entering first round
-    fileprivate func doFirstRoundCompletion() {
+    func doFirstRoundCompletion() {
         _pinCodeTemp = _pinText.value;
         self.reset();
         _titleTemp = self.titleText;
@@ -365,33 +374,21 @@ extension AZPinController: AZNumPadDelegate {
     }
     
     /// Execution logic for pin entering last round
-    fileprivate func doLastRoundCompletion() {
-        if _pinText.value == _pinCodeTemp {
-            self.handlePinValResult(_pinText.value);
-            return;
-        }
+    func doFinalRoundCompletion() {
+        self.handlePinValResult(_pinText.value);
+    }
+    
+    /// Execution logic for showing error when pins do not match
+    func doMismatchErrorCompletion() {
         self.reset();
         self.titleText = _titleTemp;
         self.pinField?.trembleError();
         self.statusText = _dataSet.vocab.pinsNotMatchText;
     }
     
-    /// When needed, hides the field and starts loading
-    fileprivate func startLoading() {
-        if !self.shouldAnimateLoading { return }
-        self.pinField?.hide();
-        _actIndicator?.startAnimating();
-        
-    }
-    
-    /// Stops loading animation
-    fileprivate func stopLoading() {
-        self.pinField?.unhide();
-        _actIndicator?.endAnimating();
-    }
     
     /// Used as a deffered callback during deffered pin validation
-    fileprivate func handlePinValResult(_ value: String) {
+    private func handlePinValResult(_ value: String) {
         guard let val = self.pinValidator else { return }
         let isValid = val.validate(value)
         if isValid {

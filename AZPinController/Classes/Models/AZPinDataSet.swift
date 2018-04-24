@@ -20,14 +20,14 @@ public struct AZPinBlueprint {
     public var numPadYPadding: CGFloat = AZMargins.M;
     public var bottomOffset: CGFloat = AZMargins.XL;
     public var numPadButtonDiameter: CGFloat = 72;
-    public var deleteImage: UIImage?;
+    public var deleteImage: UIImage?
+    public var rightMostButtonImage: UIImage?
     public var labelVerticalMargin: CGFloat = AZMargins.marginUnit;
     public var pinFieldTopMargin: CGFloat = AZMargins.L;
 }
 
 /// Struct containing all text related values
 public struct AZPinVocabulary {
-    public var skipButtonText = "Skip";
     public var titleText = "Pin Code";
     public var statusLabelInitText = "Please enter your PIN";
     public var repeatPinText = "Please repeat your PIN";
@@ -38,18 +38,19 @@ public struct AZPinVocabulary {
 
 /// Struct containing colors and fonts
 public struct AZPinPalette {
-    public var fontDefault = UIFont.systemFont(ofSize: 15);
-    public var fontTitle = UIFont.systemFont(ofSize: 19.0);
-    public var fontDigits = UIFont.systemFont(ofSize: 32)
-    public var fontDescription = UIFont.systemFont(ofSize: 13);
-    public var errorColor = UIColor(hex: 0xe5466e);
-    public var successColor = UIColor(hex: 0x1ed7c5);
-    public var mainColor = UIColor(hex: 0x666666);
+    public var fontDefault: UIFont = UIFont.systemFont(ofSize: 15);
+    public var fontTitle: UIFont = UIFont.systemFont(ofSize: 19.0);
+    public var fontDigits: UIFont = UIFont.systemFont(ofSize: 32)
+    public var fontDescription: UIFont = UIFont.systemFont(ofSize: 13);
+    public var errorColor: UIColor = UIColor(hex: 0xe5466e);
+    public var successColor: UIColor = UIColor(hex: 0x1ed7c5);
+    public var mainColor: UIColor = UIColor(hex: 0x666666);
+    public var buttonBorderColor = UIColor.clear
     public var textColor = UIColor(hex: 0x666666);
-    public var backgroundColor = UIColor.white;
-    public var pinEntryFillColor = UIColor(hex: 0x26a9e0)
-    public var pinEntrySuccessColor = UIColor(hex: 0x1ed7c5);
-    public var buttonBackgroundColor = UIColor(hex: 0xFFFFFF, alpha: 0.4);
+    public var backgroundColor: UIColor = UIColor.white;
+    public var pinEntryFillColor: UIColor = UIColor(hex: 0x26a9e0)
+    public var pinEntrySuccessColor: UIColor = UIColor(hex: 0x1ed7c5);
+    public var buttonBackgroundColor: UIColor = UIColor(hex: 0xFFFFFF, alpha: 0.4);
     
 }
 
@@ -59,7 +60,5 @@ public struct AZPinDataSet {
     public var blueprint = AZPinBlueprint();
     public var vocab = AZPinVocabulary();
     public var palette = AZPinPalette();
-    public init() {
-        
-    }
+    public init() { }
 }
