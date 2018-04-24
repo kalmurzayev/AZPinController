@@ -204,7 +204,6 @@ extension AZPinController {
     /// Setting up NumPad with layout constraints
     fileprivate func setupNumPad() -> Self {
         self.view.addSubview(self.numPadView);
-//        self.numPadView.deleteButtonImage = _dataSet.blueprint.deleteImage;
         let width = _dataSet.blueprint.numPadButtonDiameter;
         self.numPadView.snp.makeConstraints {
             $0.top.equalTo(pinField!.snp.bottom).offset(50.0);
@@ -225,7 +224,7 @@ extension AZPinController {
         let indicator = AZLoadingView();
         self.view.addSubview(indicator);
         _actIndicator = indicator;
-        
+        _actIndicator?.color = _dataSet.palette.mainColor
         guard let field = self.pinField else { return self }
         indicator.snp.makeConstraints { $0.center.equalTo(field) }
         return self;
@@ -365,8 +364,6 @@ extension AZPinController: AZNumPadDelegate {
         self.reset();
         _titleTemp = self.titleText;
         self.titleText = _dataSet.vocab.repeatPinText;
-        self.statusText = nil;
-        self.statusColor = _dataSet.palette.errorColor;
         return;
     }
     
@@ -380,6 +377,7 @@ extension AZPinController: AZNumPadDelegate {
         self.reset();
         self.titleText = _titleTemp;
         self.pinField?.trembleError();
+        self.statusColor = _dataSet.palette.errorColor;
         self.statusText = _dataSet.vocab.pinsNotMatchText;
     }
     

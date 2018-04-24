@@ -9,12 +9,17 @@ import Foundation
 class AZLoadingView: UIView {
     static let sizeDefault = CGSize(width: 24, height: 24);
     static let colorDefault = UIColor(hex: 0x9595ac);
-    fileprivate var indicator: UIActivityIndicatorView = {
+    private var indicator: UIActivityIndicatorView = {
         let view = UIActivityIndicatorView(activityIndicatorStyle: .gray);
         view.color = AZLoadingView.colorDefault;
         view.hidesWhenStopped = true;
         return view;
     }()
+    var color: UIColor = AZLoadingView.colorDefault {
+        didSet {
+            indicator.color = color
+        }
+    }
     // MARK: - init methods
     override init(frame: CGRect) {
         super.init(frame: frame);
