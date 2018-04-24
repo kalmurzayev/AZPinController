@@ -17,6 +17,9 @@ open class AZPinRepeatStateMachine: AZPinControllerStateMachineProtocol {
     }
     private var _pinCodeTemp: String?
     private var current: CtrlState = .firstRun;
+    public init() {
+        
+    }
     open func shift(with ctrl: AZPinController) {
         switch current {
         case .firstRun:
