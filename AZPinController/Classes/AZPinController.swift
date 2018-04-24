@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 import SnapKit
-@objc protocol AZPinControllerDelegate: class {
+@objc public protocol AZPinControllerDelegate: class {
     /// Delegate method to notify n-th pin entry is activated. Not called, when validation method is called
     @objc optional func pinViewController(_ controller: AZPinController, updatedPin: String);
     /// Delegate method to notify n-th pin entry is activated. Not called, when validation method is called
