@@ -167,6 +167,10 @@ public class AZNumPadView: UIView, AZNumPadButtonDelegate {
     
     func numPadButtonTapped(_ button: AZNumPadButton) {
         if button.valueText == nil { return }
+        if #available(iOS 10.0, *) {
+            let generator = UIImpactFeedbackGenerator(style: .light)
+            generator.impactOccurred();
+        }
         self.delegate?.numPad(self, enteredValue: button.valueText!);
     }
 }

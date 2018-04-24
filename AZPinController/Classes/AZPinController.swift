@@ -360,7 +360,7 @@ extension AZPinController: AZNumPadDelegate {
     }
     
     /// Execution logic for pin entering first round
-    func doFirstRoundCompletion() {
+    open func doFirstRoundCompletion() {
         _pinCodeTemp = _pinText.value;
         self.reset();
         _titleTemp = self.titleText;
@@ -371,12 +371,12 @@ extension AZPinController: AZNumPadDelegate {
     }
     
     /// Execution logic for pin entering last round
-    func doFinalRoundCompletion() {
+    open func doFinalRoundCompletion() {
         self.handlePinValResult(_pinText.value);
     }
     
     /// Execution logic for showing error when pins do not match
-    func doMismatchErrorCompletion() {
+    open func doMismatchErrorCompletion() {
         self.reset();
         self.titleText = _titleTemp;
         self.pinField?.trembleError();
