@@ -88,8 +88,6 @@ open class AZPinController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    /// Set to true if PIN code needs to be repeated before validation
-    open var shouldConfirmPin: Bool = false;
     /// If true, shows loading animation while processing deferred validator
     open var shouldAnimateLoading: Bool = false;
     open var statusLabel: AZCommonLabel = {
@@ -111,7 +109,7 @@ open class AZPinController: UIViewController {
     fileprivate var _actIndicator: AZLoadingView?;
     open var pinValidator: AZPinValidating?
     open var stateMachine: AZPinControllerStateMachineProtocol?;
-    weak var delegate: AZPinControllerDelegate?;
+    weak open var delegate: AZPinControllerDelegate?;
     // MARK: - Private properties
     fileprivate var _pinText: AZPinText!;
     fileprivate var _isRepeatingPin: Bool = false;
@@ -302,7 +300,6 @@ extension AZPinController {
     }
     
     fileprivate func finalizeView() {
-        stateMachine = AZPinRepeatStateMachine()
         view.backgroundColor = _dataSet.palette.backgroundColor;
     }
     

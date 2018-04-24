@@ -34,8 +34,6 @@ class ViewController: UIViewController {
         set.blueprint.deleteImage = #imageLiteral(resourceName: "step-backward")
         set.blueprint.rightMostButtonImage = #imageLiteral(resourceName: "icAlertTouchid")
         let ctrl = AZPinController(dataSet: set);
-//        ctrl.stateMachine = AZPinStateMachine();
-        ctrl.shouldConfirmPin = true;
         ctrl.pinLength = 6;
         ctrl.pinValidator = AZPinValidator(pinLength: 6);
         let gradientLayer = CAGradientLayer()
