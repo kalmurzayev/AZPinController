@@ -178,7 +178,8 @@ extension AZPinController {
         self.statusLabel.snp.makeConstraints {
             $0.top.equalTo(self.titleLabel.snp.bottom)
                 .offset(_dataSet.blueprint.labelVerticalMargin);
-            $0.centerX.equalTo(self.view);
+            $0.leading.equalTo(self.view).offset(AZMargins.M);
+            $0.trailing.equalTo(self.view).offset(-AZMargins.M);
         }
         self.statusText = _dataSet.vocab.statusLabelInitText;
         return self;
