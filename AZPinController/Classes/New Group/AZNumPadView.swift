@@ -77,9 +77,6 @@ public class AZNumPadView: UIView, AZNumPadButtonDelegate {
     /// Initiates its constraints and populates numpad buttons with their constraints
     private func initiateViews() {
         self.backgroundColor = UIColor.clear;
-        self.snp.makeConstraints {
-            $0.height.equalTo(self.snp.width).multipliedBy(11.0 / 8);
-        };
         self.populateButtons();
     }
     

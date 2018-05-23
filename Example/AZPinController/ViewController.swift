@@ -27,6 +27,7 @@ class ViewController: UIViewController {
     @objc private func tapped() {
         var set = AZPinDataSet()
         set.vocab.titleText = "Введите текущий код доступа"
+        set.vocab.statusLabelInitText = "Завершились очень интересные и продуктивные встречи в рамках визита делегации блаблабла блабла бла"
         set.palette.buttonBackgroundColor = UIColor(hex: 0xffffff, alpha: 0.4)
         set.palette.textColor = .white
         set.palette.mainColor = .white
