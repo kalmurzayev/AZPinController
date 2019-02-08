@@ -54,12 +54,25 @@ public class AZNumPadView: UIView, AZNumPadButtonDelegate {
             }
         }
     }
+    
+    open var buttonBorder: (color: UIColor, width: CGFloat)? {
+        didSet {
+            guard let border = buttonBorder, border.width != 0.0 else { return }
+            _numPadButtons.forEach {
+                $0.layer.borderColor = border.color.cgColor
+                $0.layer.borderWidth = border.width
+            }
+        }
+    }
+    
     weak var delegate: AZNumPadDelegate?;
     private var _numPadButtons: [AZNumPadButton] = [];
     /// used to align bottom-left button in AZPinViewController
-    var leftMostView: UIView?
+    open var leftMostView: UIView?
     /// used to align bottom-right button in AZPinViewController
-    var rightMostView: UIView?
+    open var rightMostView: UIView?
+    /// uset to center according last bottom button
+    open var bottomMostView: UIView?
     // MARK: - init methods
     override public init(frame: CGRect) {
         super.init(frame: frame);
@@ -117,6 +130,7 @@ public class AZNumPadView: UIView, AZNumPadButtonDelegate {
             $0.centerX.equalTo(self);
             $0.centerY.equalTo(self).multipliedBy(10.0 / 5.5);
         };
+        bottomMostView = zeroButton
         _numPadButtons.append(zeroButton);
         // 3. adjust colors for buttons
         self.adjustColors();

@@ -24,6 +24,7 @@ public struct AZPinBlueprint {
     public var rightMostButtonImage: UIImage?
     public var labelVerticalMargin: CGFloat = AZMargins.marginUnit;
     public var pinFieldTopMargin: CGFloat = AZMargins.L;
+    public var buttonBorderWidth: CGFloat = 0.0
 }
 
 /// Struct containing all text related values

@@ -1,5 +1,5 @@
 PODS:
-  - AZPinController (0.1.0):
+  - AZPinController (0.1.12):
     - SnapKit
   - Nimble (7.0.3)
   - Quick (1.2.0)
@@ -10,16 +10,22 @@ DEPENDENCIES:
   - Nimble (~> 7.0.2)
   - Quick (~> 1.2.0)
 
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - Nimble
+    - Quick
+    - SnapKit
+
 EXTERNAL SOURCES:
   AZPinController:
     :path: "../"
 
 SPEC CHECKSUMS:
-  AZPinController: 4d556d978ae2488f7703923d941b5c1c7f710bae
+  AZPinController: d99eb862eb2d63bde329f52864227e22f5360c0e
   Nimble: 7f5a9c447a33002645a071bddafbfb24ea70e0ac
   Quick: 58d203b1c5e27fff7229c4c1ae445ad7069a7a08
   SnapKit: a42d492c16e80209130a3379f73596c3454b7694
 
 PODFILE CHECKSUM: 312307898a1b0ac6013649f8935dbd37e2f0b3c0
 
-COCOAPODS: 1.2.1
+COCOAPODS: 1.5.3

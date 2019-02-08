@@ -163,11 +163,16 @@ extension AZPinController {
         self.titleLabel.textColor = _dataSet.palette.textColor;
         self.titleText = _dataSet.vocab.titleText;
         self.view.addSubview(self.titleLabel);
+        setupTitleLabelConstraints()
+        return self;
+    }
+    
+    /// Override this function in order to customize constraints
+    @objc open func setupTitleLabelConstraints() {
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 100.0),
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
             ])
-        return self;
     }
     
     /// Setting up Status Label with layout constraints
@@ -175,14 +180,19 @@ extension AZPinController {
         self.view.addSubview(self.statusLabel);
         self.statusLabel.font = _dataSet.palette.fontDescription;
         self.statusLabel.textColor = _dataSet.palette.textColor;
+        self.statusText = _dataSet.vocab.statusLabelInitText;
+        setupStatusLabelConstraints()
+        return self;
+    }
+    
+    /// Override this function in order to customize constraints
+    @objc open func setupStatusLabelConstraints() {
         self.statusLabel.snp.makeConstraints {
             $0.top.equalTo(self.titleLabel.snp.bottom)
                 .offset(_dataSet.blueprint.labelVerticalMargin);
             $0.leading.equalTo(self.view).offset(AZMargins.M);
             $0.trailing.equalTo(self.view).offset(-AZMargins.M);
         }
-        self.statusText = _dataSet.vocab.statusLabelInitText;
-        return self;
     }
     
     /// Setting up Pin Field with circle entries and layout constraints
@@ -193,31 +203,42 @@ extension AZPinController {
         field.successColor = _dataSet.palette.pinEntrySuccessColor;
         field.errorColor = _dataSet.palette.errorColor;
         self.view.addSubview(field);
-        field.snp.makeConstraints {
+        self.pinField = field;
+        setupPinFieldConstraints()
+        return self;
+    }
+    
+    /// Override this function in order to customize constraints
+    @objc open func setupPinFieldConstraints() {
+        self.pinField?.snp.makeConstraints {
             $0.top.equalTo(self.statusLabel.snp.bottom)
                 .offset(_dataSet.blueprint.pinFieldTopMargin);
             $0.centerX.equalTo(self.view);
         }
-        self.pinField = field;
-        return self;
     }
     
     /// Setting up NumPad with layout constraints
     fileprivate func setupNumPad() -> Self {
         self.view.addSubview(self.numPadView);
         let width = _dataSet.blueprint.numPadButtonDiameter;
-        self.numPadView.snp.makeConstraints {
-            $0.top.equalTo(pinField!.snp.bottom).offset(50.0);
-            $0.centerX.equalTo(self.view);
-            $0.width.equalTo(width * 3.0 + _dataSet.blueprint.numPadXPadding * 2.0);
-            $0.height.equalTo(width * 4.0 + _dataSet.blueprint.numPadYPadding * 3.0);
-        }
+        setupNumPadConstraints()
         self.numPadView.buttonWidth = width;
         self.numPadView.delegate = self;
         self.numPadView.font = _dataSet.palette.fontDigits;
         self.numPadView.mainColor = _dataSet.palette.mainColor;
         self.numPadView.buttonBackgroundColor = _dataSet.palette.buttonBackgroundColor;
+        self.numPadView.buttonBorder = (color: _dataSet.palette.buttonBorderColor, width: _dataSet.blueprint.buttonBorderWidth)
         return self;
+    }
+    
+    /// Override this function in order to customize constraints
+    @objc open func setupNumPadConstraints() {
+        self.numPadView.snp.makeConstraints {
+            $0.top.equalTo(pinField!.snp.bottom).offset(50.0);
+            $0.centerX.equalTo(self.view);
+            $0.width.equalTo(_dataSet.blueprint.numPadButtonDiameter * 3.0 + _dataSet.blueprint.numPadXPadding * 2.0);
+            $0.height.equalTo(_dataSet.blueprint.numPadButtonDiameter * 4.0 + _dataSet.blueprint.numPadYPadding * 3.0);
+        }
     }
     
     fileprivate func setupLoadingView() -> Self {
@@ -241,6 +262,12 @@ extension AZPinController {
             self, action: #selector(closeTapped), for: .touchUpInside);
         self.closeButton.translatesAutoresizingMaskIntoConstraints = false;
         self.view.addSubview(self.closeButton);
+        setupCloseButtonConstraints()
+        return self;
+    }
+    
+    /// Override this function in order to customize constraints
+    @objc open func setupCloseButtonConstraints() {
         self.closeButton.snp.makeConstraints {
             $0.bottom.equalTo(self.view)
                 .offset(-_dataSet.blueprint.bottomOffset);
@@ -249,12 +276,11 @@ extension AZPinController {
             self.closeButton.snp.makeConstraints {
                 $0.centerX.equalTo(numPadLeftView)
             }
-            return self;
+        } else {
+            self.closeButton.snp.makeConstraints {
+                $0.left.equalTo(numPadView.snp.left)
+            }
         }
-        self.closeButton.snp.makeConstraints {
-            $0.left.equalTo(numPadView.snp.left)
-        }
-        return self;
     }
     
     fileprivate func setupRightButton() -> Self {
@@ -262,6 +288,12 @@ extension AZPinController {
         rightButton.backgroundColor = .clear
         rightButton.setImage(_dataSet.blueprint.rightMostButtonImage, for: .normal)
         rightButton.isHidden = false
+        setupRightButtonConstraints()
+        return self;
+    }
+    
+    /// Override this function in order to customize constraints
+    @objc open func setupRightButtonConstraints() {
         rightButton.snp.makeConstraints {
             $0.centerY.equalTo(closeButton)
         }
@@ -269,12 +301,11 @@ extension AZPinController {
             rightButton.snp.makeConstraints {
                 $0.centerX.equalTo(numPadRightView)
             }
-            return self
+        } else {
+            rightButton.snp.makeConstraints {
+                $0.right.equalTo(numPadView.snp.right)
+            }
         }
-        rightButton.snp.makeConstraints {
-            $0.right.equalTo(numPadView.snp.right)
-        }
-        return self;
     }
     
     private func setupDeleteButton() -> Self {
@@ -284,6 +315,12 @@ extension AZPinController {
             self, action: #selector(deleteTapped), for: .touchUpInside);
         self.view.addSubview(deleteButton);
         deleteButton.isHidden = true
+        setupDeleteButtonConstraints()
+        return self
+    }
+    
+    /// Override this function in order to customize constraints
+    @objc open func setupDeleteButtonConstraints() {
         deleteButton.snp.makeConstraints {
             $0.centerY.equalTo(closeButton)
         }
@@ -291,12 +328,11 @@ extension AZPinController {
             deleteButton.snp.makeConstraints {
                 $0.centerX.equalTo(numPadRightView)
             }
-            return self
+        } else {
+            deleteButton.snp.makeConstraints {
+                $0.right.equalTo(numPadView.snp.right)
+            }
         }
-        deleteButton.snp.makeConstraints {
-            $0.right.equalTo(numPadView.snp.right)
-        }
-        return self
     }
     
     fileprivate func finalizeView() {
@@ -317,6 +353,8 @@ extension AZPinController {
     open func reset() {
         self.pinField?.reset();
         _pinText.reset();
+        deleteButton.isHidden = true
+        rightButton.isHidden = false
     }
     
     /// When needed, hides the field and starts loading
@@ -396,6 +434,7 @@ extension AZPinController: AZNumPadDelegate {
                 return;
             }
             self.delegate?.pinSuccessIn?(self);
+            return
         }
         
         self.reset();

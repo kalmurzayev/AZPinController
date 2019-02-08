@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'AZPinController'
-  s.version          = '0.1.11'
+  s.version          = '0.1.12'
   s.summary          = 'Simple UIViewController for pin code entering'
   s.description      = 'AZPinController can be used for cases when you need to enter a pin code of various lengths'
 
