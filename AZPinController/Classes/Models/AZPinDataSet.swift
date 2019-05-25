@@ -43,16 +43,18 @@ public struct AZPinPalette {
     public var fontTitle: UIFont = UIFont.systemFont(ofSize: 19.0);
     public var fontDigits: UIFont = UIFont.systemFont(ofSize: 32)
     public var fontDescription: UIFont = UIFont.systemFont(ofSize: 13);
-    public var errorColor: UIColor = UIColor(hex: 0xe5466e);
-    public var successColor: UIColor = UIColor(hex: 0x1ed7c5);
-    public var mainColor: UIColor = UIColor(hex: 0x666666);
+    public var errorColor: UIColor = UIColor(hex: 0xe5466e)
+    public var errorFillColor: UIColor = UIColor(hex: 0xe5466e).withAlphaComponent(0.5)
+    public var errorBorderColor: UIColor = UIColor(hex: 0xe5466e)
+    public var numPadMainColor: UIColor = UIColor(hex: 0x666666);
     public var buttonBorderColor = UIColor.clear
     public var textColor = UIColor(hex: 0x666666);
     public var backgroundColor: UIColor = UIColor.white;
     public var pinEntryFillColor: UIColor = UIColor(hex: 0x26a9e0)
     public var pinEntrySuccessColor: UIColor = UIColor(hex: 0x1ed7c5);
+    public var pinEntrySuccessBorderColor: UIColor = UIColor(hex: 0x1ed7c5);
     public var buttonBackgroundColor: UIColor = UIColor(hex: 0xFFFFFF, alpha: 0.4);
-    
+    public var buttonSubLetterColor: UIColor = UIColor.black
 }
 
 /// Data set with values for PinController visual properties

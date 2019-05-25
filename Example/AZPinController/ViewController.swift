@@ -9,34 +9,38 @@ import SnapKit
 import AZPinController
 class ViewController: UIViewController {
     override func viewDidLoad() {
-        super.viewDidLoad();
-        self.initiateViews();
+        super.viewDidLoad()
+        self.initiateViews()
     }
     
     private func initiateViews() {
-        let button = UIButton();
-        button.setTitle("Tap to present PIN", for: .normal);
-        button.setTitleColor(.blue, for: .normal);
-        button.addTarget(self, action: #selector(tapped), for: .touchUpInside);
-        self.view.addSubview(button);
+        let button = UIButton()
+        button.setTitle("Tap to present PIN", for: .normal)
+        button.setTitleColor(.blue, for: .normal)
+        button.addTarget(self, action: #selector(tapped), for: .touchUpInside)
+        self.view.addSubview(button)
         button.snp.makeConstraints {
-            $0.center.equalTo(self.view);
+            $0.center.equalTo(self.view)
         }
     }
     
     @objc private func tapped() {
         var set = AZPinDataSet()
         set.vocab.titleText = "Введите текущий код доступа"
-        set.vocab.statusLabelInitText = "Завершились очень интересные и продуктивные встречи в рамках визита делегации блаблабла блабла бла"
+        set.vocab.statusLabelInitText = " "
         set.palette.buttonBackgroundColor = UIColor(hex: 0xffffff, alpha: 0.4)
         set.palette.textColor = .white
-        set.palette.mainColor = .white
+        set.palette.numPadMainColor = .white
+        set.palette.buttonSubLetterColor = UIColor.yellow
+        set.palette.pinEntrySuccessBorderColor = UIColor.orange
         set.palette.pinEntryFillColor = .white
         set.blueprint.deleteImage = #imageLiteral(resourceName: "step-backward")
         set.blueprint.rightMostButtonImage = #imageLiteral(resourceName: "icAlertTouchid")
-        let ctrl = AZPinController(dataSet: set);
-        ctrl.pinLength = 6;
-        ctrl.pinValidator = AZPinValidator(pinLength: 6);
+        let ctrl = AZPinController(dataSet: set)
+        ctrl.pinEntryShakeOnError = false
+        ctrl.stateMachine = AZPinRepeatStateMachine()
+        ctrl.pinLength = 4
+        ctrl.pinValidator = AZPinValidator(pinLength: 4)
         let gradientLayer = CAGradientLayer()
         gradientLayer.frame = UIScreen.main.bounds
         gradientLayer.locations = [0, 0.6, 1]
@@ -45,7 +49,7 @@ class ViewController: UIViewController {
         backView.frame = UIScreen.main.bounds
         backView.layer.addSublayer(gradientLayer)
         ctrl.view.insertSubview(backView, at: 0)
-        self.present(ctrl, animated: true);
+        self.present(ctrl, animated: true)
     }
 }
 

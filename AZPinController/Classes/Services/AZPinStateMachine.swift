@@ -7,16 +7,16 @@
 
 import Foundation
 public protocol AZPinControllerStateMachineProtocol: class {
-    func shift(with ctrl: AZPinController);
+    func shift(with ctrl: AZPinController)
 }
 
 open class AZPinRepeatStateMachine: AZPinControllerStateMachineProtocol {
     enum CtrlState: Int {
-        case firstRun;
-        case repeatRun;
+        case firstRun
+        case repeatRun
     }
     private var _pinCodeTemp: String?
-    private var current: CtrlState = .firstRun;
+    private var current: CtrlState = .firstRun
     public init() {
         
     }
@@ -32,11 +32,11 @@ open class AZPinRepeatStateMachine: AZPinControllerStateMachineProtocol {
                 ctrl.doMismatchErrorCompletion()
             }
         }
-        self.increment();
+        self.increment()
     }
     
     private func increment() {
-        let next: Int = (current.rawValue + 1) % 2;
-        current = CtrlState(rawValue: next)!;
+        let next: Int = (current.rawValue + 1) % 2
+        current = CtrlState(rawValue: next)!
     }
 }

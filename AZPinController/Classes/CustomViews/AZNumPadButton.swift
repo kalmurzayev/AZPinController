@@ -20,8 +20,13 @@ class AZNumPadButton: UIView {
     weak var delegate: AZNumPadButtonDelegate?;
     var mainColor: UIColor = .black {
         didSet {
-            _digitLabel.textColor = mainColor;
-            _lettersLabel.textColor = mainColor;
+            _digitLabel.textColor = mainColor
+            _lettersLabel.textColor = mainColor
+        }
+    }
+    var subLetterColor: UIColor = .gray {
+        didSet {
+            _lettersLabel.textColor = subLetterColor
         }
     }
     var tapAnimate: Bool = true {

@@ -20,9 +20,10 @@ protocol AZNumPadDelegate: class {
 
 public class AZNumPadView: UIView, AZNumPadButtonDelegate {
     var mainColor: UIColor? {
-        didSet {
-            self.adjustColors();
-        }
+        didSet { self.adjustColors() }
+    }
+    var subLetterColor: UIColor? {
+        didSet { self.adjustColors() }
     }
     var font: UIFont? {
         didSet {
@@ -170,9 +171,15 @@ public class AZNumPadView: UIView, AZNumPadButtonDelegate {
     }
     
     private func adjustColors() {
-        guard let color = self.mainColor else { return }
-        _numPadButtons.forEach {
-            $0.mainColor = color;
+        if let color = self.mainColor {
+            _numPadButtons.forEach {
+                $0.mainColor = color
+            }
+        }
+        if let color = self.subLetterColor {
+            _numPadButtons.forEach {
+                $0.subLetterColor = color
+            }
         }
     }
     
