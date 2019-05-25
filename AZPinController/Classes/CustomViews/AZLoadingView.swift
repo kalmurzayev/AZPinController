@@ -10,7 +10,7 @@ class AZLoadingView: UIView {
     static let sizeDefault = CGSize(width: 24, height: 24);
     static let colorDefault = UIColor(hex: 0x9595ac);
     private var indicator: UIActivityIndicatorView = {
-        let view = UIActivityIndicatorView(activityIndicatorStyle: .gray);
+        let view = UIActivityIndicatorView(style: .gray)
         view.color = AZLoadingView.colorDefault;
         view.hidesWhenStopped = true;
         return view;
