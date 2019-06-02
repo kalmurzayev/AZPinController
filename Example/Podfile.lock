@@ -1,6 +1,6 @@
 PODS:
-  - AZPinController (0.2.0):
-    - SnapKit
+  - AZPinController (0.2.4):
+    - SnapKit (= 4.2.0)
   - SnapKit (4.2.0)
 
 DEPENDENCIES:
@@ -15,7 +15,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  AZPinController: 8a87885fe7244f54b0b881d25d0aae979bf27295
+  AZPinController: 5f3d7ae4137307c7ee3553afb422449f8b787ab4
   SnapKit: fe8a619752f3f27075cc9a90244d75c6c3f27e2a
 
 PODFILE CHECKSUM: a211346c544c2845b773cafe2e4adc52203a605e

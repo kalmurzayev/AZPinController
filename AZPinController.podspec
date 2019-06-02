@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'AZPinController'
-  s.version          = '0.2.4'
+  s.version          = '0.2.5'
   s.summary          = 'Simple UIViewController for pin code entering'
   s.description      = 'AZPinController can be used for cases when you need to enter a pin code of various lengths'
 
@@ -24,5 +24,5 @@ Pod::Spec.new do |s|
   # }
 
   s.frameworks = 'UIKit'
-  s.dependency 'SnapKit'
+  s.dependency 'SnapKit', '4.2.0'
 end
